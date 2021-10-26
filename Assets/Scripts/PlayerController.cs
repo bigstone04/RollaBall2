@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -8,9 +9,16 @@ public class PlayerController : MonoBehaviour
 
     public float speed;
 
+    private int count;
+
+    public TextMeshProUGUI countText;
+	public GameObject winTextObject;
     void Start() 
     {
         rb = GetComponent<Rigidbody>();
+        count = 0;
+        SetCountText ();
+        winTextObject.SetActive(false);
     }
     void FixedUpdate() 
     {
@@ -21,4 +29,23 @@ public class PlayerController : MonoBehaviour
 
         rb.AddForce(movement * speed);
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("PickUp")) 
+        {
+            other.gameObject.SetActive(false);
+            count++;
+            SetCountText ();
+        }
+    }
+    void SetCountText()
+	{
+		countText.text = "Count: " + count.ToString();
+
+		if (count >= 5) 
+		{
+            // Set the text value of your 'winText'
+            winTextObject.SetActive(true);
+		}
+	}
 }
