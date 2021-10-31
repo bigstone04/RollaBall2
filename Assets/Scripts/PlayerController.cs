@@ -13,12 +13,16 @@ public class PlayerController : MonoBehaviour
 
     public TextMeshProUGUI countText;
 	public GameObject winTextObject;
+    public GameObject loseTextObject;
+    private bool move;
     void Start() 
     {
         rb = GetComponent<Rigidbody>();
         count = 0;
         SetCountText ();
         winTextObject.SetActive(false);
+        loseTextObject.SetActive(false);
+        move = true;
     }
     void FixedUpdate() 
     {
@@ -27,7 +31,8 @@ public class PlayerController : MonoBehaviour
 
         Vector3 movement = new Vector3(moveHorizontal, 0 ,moveVertical);
 
-        rb.AddForce(movement * speed);
+        if(move)rb.AddForce(movement * speed);
+        else rb.velocity = Vector3.zero;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -37,12 +42,18 @@ public class PlayerController : MonoBehaviour
             count++;
             SetCountText ();
         }
+        if (other.gameObject.CompareTag("PickOut")) 
+        {
+            other.gameObject.SetActive(false);
+            loseTextObject.SetActive(true);
+            move = false;
+        }
     }
     void SetCountText()
 	{
 		countText.text = "Count: " + count.ToString();
 
-		if (count >= 5) 
+		if (count >= 12) 
 		{
             // Set the text value of your 'winText'
             winTextObject.SetActive(true);
